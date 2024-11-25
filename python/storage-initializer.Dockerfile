@@ -12,6 +12,7 @@ ARG CARGO_HOME=/opt/.cargo/
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     build-essential \
+    pkg-config \
     openssl \
     libssl-dev \
     curl && \
