@@ -16,11 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl && \
     if [ "$(uname -m)" = "s390x" ]; then \
         echo "Installing packages and Rust for s390x" && \
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o sh.rustup.rs && \
-        export CARGO_HOME=${CARGO_HOME} && \
-        sh ./sh.rustup.rs -y && \
-        export PATH=$PATH:${CARGO_HOME}/bin && \
-        . "${CARGO_HOME}/env"; \
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > sh.rustup.rs && \
+        export CARGO_HOME=${CARGO_HOME} && sh ./sh.rustup.rs -y && export PATH=$PATH:${CARGO_HOME}/bin && . "${CARGO_HOME}/env"; \
     fi && \
     rm -f sh.rustup.rs && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
