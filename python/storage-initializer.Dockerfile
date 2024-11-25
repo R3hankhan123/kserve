@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     build-essential \
     pkg-config \
-    openssl \
+    libhdf5-dev \
+    gfortran \
     libssl-dev \
     curl && \
     if [ "$(uname -m)" = "s390x" ]; then \
