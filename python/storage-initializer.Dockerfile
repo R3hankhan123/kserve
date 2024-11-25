@@ -12,6 +12,7 @@ ARG CARGO_HOME=/opt/.cargo/
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     build-essential \
+    openssl \
     libssl-dev \
     curl && \
     if [ "$(uname -m)" = "s390x" ]; then \
@@ -27,6 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Set environment variables for Rust
 ENV PATH=$PATH:/opt/.cargo/bin
+ENV OPENSSL_DIR=/usr/local/openssl
+ENV PKG_CONFIG_PATH=$OPENSSL_DIR/lib/pkgconfig
+ENV LD_LIBRARY_PATH=$OPENSSL_DIR/lib:$LD_LIBRARY_PATH
 RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
 ENV PATH="$PATH:${POETRY_HOME}/bin"
 
