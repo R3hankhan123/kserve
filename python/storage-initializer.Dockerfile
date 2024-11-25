@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y \
     libkrb5-dev \
     krb5-config \
     openssl-devel \
-    rust-toolset
+    rust-toolset \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir krbcontext==0.10 hdfs~=2.6.0 requests-kerberos==0.14.0
