@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     pkg-config \
     libhdf5-dev \
+    libopenblas-dev \
     gfortran \
     libssl-dev \
     curl && \
