@@ -15,13 +15,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl-dev \
     curl && \
     if [ "$(uname -m)" = "s390x" ]; then \
-        echo "Installing packages and Rust for s390x" && \
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > sh.rustup.rs && \
-        export CARGO_HOME=${CARGO_HOME} && sh ./sh.rustup.rs -y && export PATH=$PATH:${CARGO_HOME}/bin && . "${CARGO_HOME}/env"; \
+        echo "Installing Rust for s390x" && \
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o sh.rustup.rs && \
+        export CARGO_HOME=${CARGO_HOME} && \
+        sh ./sh.rustup.rs -y && \
+        export PATH=$PATH:${CARGO_HOME}/bin && \
+        rustc --version && cargo --version && \
+        rm -f sh.rustup.rs; \
     fi && \
-    rm -f sh.rustup.rs && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Set environment variables for Rust
+ENV PATH=$PATH:/opt/.cargo/bin
 RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
 ENV PATH="$PATH:${POETRY_HOME}/bin"
 
