@@ -22,7 +22,11 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
-RUN cd kserve && poetry install --no-root --no-interaction --no-cache --extras "storage"
+RUN cd kserve && \
+    if [ $(uname -m) = "s390x" ]; then \
+       export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=true; \
+    fi && \
+    poetry install --no-root --no-interaction --no-cache --extras "storage"
 COPY kserve kserve
 RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
 
@@ -32,6 +36,8 @@ RUN apt-get update && apt-get install -y \
     gcc \
     libkrb5-dev \
     krb5-config \
+    openssl-devel \
+    rust-toolset
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir krbcontext==0.10 hdfs~=2.6.0 requests-kerberos==0.14.0
