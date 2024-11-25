@@ -9,7 +9,10 @@ ARG POETRY_HOME=/opt/poetry
 ARG POETRY_VERSION=1.8.3
 
 # Required for building packages for arm64 arch
-RUN apt-get update && apt-get install -y --no-install-recommends python3-dev build-essential && apt-get clean && \
+RUN apt-get update && apt-get install -y --no-install-recommends python3-dev build-essential libssl-dev \
+    rustc \
+    cargo \
+    && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
@@ -36,8 +39,6 @@ RUN apt-get update && apt-get install -y \
     gcc \
     libkrb5-dev \
     krb5-config \
-    openssl-devel \
-    rust-toolset \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir krbcontext==0.10 hdfs~=2.6.0 requests-kerberos==0.14.0
