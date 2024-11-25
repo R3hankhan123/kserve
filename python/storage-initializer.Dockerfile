@@ -8,34 +8,20 @@ FROM ${BASE_IMAGE} AS builder
 ARG POETRY_HOME=/opt/poetry
 ARG POETRY_VERSION=1.8.3
 ARG CARGO_HOME=/opt/.cargo/
-# Required for building packages for arm64 arch
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-dev \
-    build-essential \
-    pkg-config \
-    libhdf5-dev \
-    libopenblas-dev \
-    gfortran \
-    libssl-dev \
-    curl && \
-    if [ "$(uname -m)" = "s390x" ]; then \
-        echo "Installing Rust for s390x" && \
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o sh.rustup.rs && \
-        export CARGO_HOME=${CARGO_HOME} && \
-        sh ./sh.rustup.rs -y && \
-        export PATH=$PATH:${CARGO_HOME}/bin && \
-        rustc --version && cargo --version && \
-        rm -f sh.rustup.rs; \
-    fi && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables for Rust
-ENV PATH=$PATH:/opt/.cargo/bin
-ENV OPENSSL_DIR=/usr/local/openssl
-ENV PKG_CONFIG_PATH=$OPENSSL_DIR/lib/pkgconfig
-ENV LD_LIBRARY_PATH=$OPENSSL_DIR/lib:$LD_LIBRARY_PATH
+# Required for building packages for arm64 arch
+RUN apt-get update && apt-get install -y --no-install-recommends python3-dev build-essential && \
+    if [ "$(uname -m)" = "s390x" ]; then \
+       echo "Installing packages and rust " && \
+       apt-get install -y  libssl-dev pkg-config curl libhdf5-dev  && \
+       curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > sh.rustup.rs && \
+       export CARGO_HOME=${CARGO_HOME} && sh ./sh.rustup.rs -y && export PATH=$PATH:${CARGO_HOME}/bin && . "${CARGO_HOME}/env"; \
+    fi && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV PATH="$PATH:${POETRY_HOME}/bin:${CARGO_HOME}/bin"
 RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
-ENV PATH="$PATH:${POETRY_HOME}/bin"
 
 # Activate virtual env
 ARG VENV_PATH
