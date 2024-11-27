@@ -40,7 +40,7 @@ COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
     pip install kserve[storage] --no-cache-dir
 COPY kserve kserve
-RUN cd kserve && pip install ./kserve --no-cache-dir
+RUN cd kserve && pip install kserve[storage] --no-cache-dir
 
 ARG DEBIAN_FRONTEND=noninteractive
 
