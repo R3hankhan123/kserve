@@ -29,7 +29,7 @@ ARG VENV_PATH
 ENV VIRTUAL_ENV=${VENV_PATH}
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
+RUN poetry config virtualenvs.create false
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
     poetry install --no-root --no-interaction --no-cache --extras "storage"
