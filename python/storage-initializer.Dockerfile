@@ -38,9 +38,9 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
-    pip install "kserve[storage]" --no-cache-dir
+    pip install kserve[storage] --no-cache-dir --no-root
 COPY kserve kserve
-RUN cd kserve && pip install ./kserve[storage] --no-cache-dir
+RUN cd kserve && pip install kserve[storage] --no-cache-dir
 
 ARG DEBIAN_FRONTEND=noninteractive
 
