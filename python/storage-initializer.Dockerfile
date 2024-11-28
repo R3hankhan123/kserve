@@ -25,10 +25,10 @@ ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 #RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
 
 # Activate virtual env
-ARG VENV_PATH
-ENV VIRTUAL_ENV=${VENV_PATH}
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+#ARG VENV_PATH
+#ENV VIRTUAL_ENV=${VENV_PATH}
+#RUN python3 -m venv $VIRTUAL_ENV
+#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 #RUN poetry config virtualenvs.create false
 #COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 #RUN cd kserve && \
