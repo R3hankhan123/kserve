@@ -21,7 +21,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-dev bui
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH="$PATH:${POETRY_HOME}/bin:${CARGO_HOME}/bin"
-ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
 
 # Activate virtual env
@@ -29,6 +28,7 @@ ARG VENV_PATH
 ENV VIRTUAL_ENV=${VENV_PATH}
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 RUN pip install grpcio==1.66.1
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
