@@ -22,25 +22,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-dev bui
 
 ENV PATH="$PATH:${POETRY_HOME}/bin:${CARGO_HOME}/bin"
 ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
-#RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
+RUN pip install grpcio==1.66.1
+RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
 
 # Activate virtual env
-#ARG VENV_PATH
-#ENV VIRTUAL_ENV=${VENV_PATH}
-#RUN python3 -m venv $VIRTUAL_ENV
-#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-#RUN poetry config virtualenvs.create false
-#COPY kserve/pyproject.toml kserve/poetry.lock kserve/
-#RUN cd kserve && \
-#    poetry install --no-root --no-interaction --no-cache --extras "storage"
-#COPY kserve kserve
-#RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
-
+ARG VENV_PATH
+ENV VIRTUAL_ENV=${VENV_PATH}
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN poetry config virtualenvs.create false
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
-    pip install kserve[storage] --no-cache-dir
+    poetry install --no-root --no-interaction --no-cache --extras "storage"
 COPY kserve kserve
-RUN cd kserve && pip install kserve[storage] --no-cache-dir
+RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
+
+#COPY kserve/pyproject.toml kserve/poetry.lock kserve/
+#RUN cd kserve && \
+#    pip install kserve[storage] --no-cache-dir
+#COPY kserve kserve
+#RUN cd kserve && pip install kserve[storage] --no-cache-dir
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -64,7 +65,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN useradd kserve -m -u 1000 -d /home/kserve
 
-COPY --from=builder --chown=kserve:kserve /kserve /kserve
+COPY --from=builder --chown=kserve:kserve $VIRTUAL_ENV $VIRTUAL_ENV
 COPY --from=builder kserve kserve
 COPY ./storage-initializer /storage-initializer
 
