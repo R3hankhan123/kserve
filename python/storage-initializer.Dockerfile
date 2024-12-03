@@ -29,7 +29,7 @@ ENV VIRTUAL_ENV=${VENV_PATH}
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
-RUN if [ "$(uname -m)" = "s390x" ]; then pip install websockets==13.0.1 websocket-client==1.8.0; fi
+RUN if [ "$(uname -m)" = "s390x" ]; then pip install websockets==13.0.1 websocket-client==1.8.0 urllib3==2.2.3 watchfiles==0.24.0 uvicorn==0.30.6; fi
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
     poetry install --no-root --no-interaction --no-cache --extras "storage"
