@@ -78,3 +78,4 @@ WORKDIR /work
 RUN chown -R kserve:kserve /mnt
 USER 1000
 ENTRYPOINT ["/storage-initializer/scripts/initializer-entrypoint"]
+#for test
