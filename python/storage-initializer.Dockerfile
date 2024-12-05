@@ -13,7 +13,7 @@ ARG CARGO_HOME=/opt/.cargo/
 RUN apt-get update && apt-get install -y --no-install-recommends python3-dev build-essential && \
     if [ "$(uname -m)" = "s390x" ]; then \
        echo "Installing packages and rust " && \
-       apt-get install -y  libssl-dev pkg-config curl libhdf5-dev gcc g++ gfortran libopenblas-dev liblapack-dev pkg-config git  && \
+       apt-get install -y  libssl-dev pkg-config curl libhdf5-dev git  && \
        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > sh.rustup.rs && \
        export CARGO_HOME=${CARGO_HOME} && sh ./sh.rustup.rs -y && export PATH=$PATH:${CARGO_HOME}/bin && . "${CARGO_HOME}/env"; \
     fi && \
