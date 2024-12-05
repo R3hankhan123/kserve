@@ -31,13 +31,13 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 COPY kserve/requirements.txt  kserve/
 RUN if [ "$(uname -m)" = "s390x" ]; then pip install -r /kserve/requirements.txt; fi
-RUN if [ "$(uname -m)" = "s390x" ]; then \
-    git clone https://github.com/numpy/numpy.git && \
-    cd numpy && \
-    git checkout tags/v1.26.4 && \
-    git submodule update --init && \
-    pip install .; \
-fi
+#RUN if [ "$(uname -m)" = "s390x" ]; then \
+#    git clone https://github.com/numpy/numpy.git && \
+#    cd numpy && \
+#    git checkout tags/v1.26.4 && \
+#    git submodule update --init && \
+#    pip install .; \
+#fi
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
