@@ -13,7 +13,7 @@ ARG CARGO_HOME=/opt/.cargo/
 RUN apt-get update && apt-get install -y --no-install-recommends python3-dev build-essential && \
     if [ "$(uname -m)" = "s390x" ]; then \
        echo "Installing packages and rust " && \
-       apt-get install -y  libssl-dev pkg-config curl libhdf5-dev  && \
+       apt-get install -y  libssl-dev pkg-config curl libhdf5-dev gcc g++ gfortran libopenblas-dev liblapack-dev pkg-config git  && \
        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > sh.rustup.rs && \
        export CARGO_HOME=${CARGO_HOME} && sh ./sh.rustup.rs -y && export PATH=$PATH:${CARGO_HOME}/bin && . "${CARGO_HOME}/env"; \
     fi && \
@@ -30,8 +30,15 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 COPY kserve/requirements.txt  kserve/
-RUN if [ "$(uname -m)" = "s390x" ]; then {POETRY_HOME}/bin/pip install -r /kserve/requirements.txt; fi
-#RUN if [ "$(uname -m)" = "s390x" ]; then pip install -r numpy==1.26.4 pandas==2.2.2; fi
+RUN if [ "$(uname -m)" = "s390x" ]; then pip install -r /kserve/requirements.txt; fi
+RUN if [ "$(uname -m)" = "s390x" ]; then \
+    git clone https://github.com/numpy/numpy.git && \
+    cd numpy && \
+    git checkout tags/v1.26.4 && \
+    git submodule update --init && \
+    pip install .; \
+fi
+
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
     poetry install --no-root --no-interaction --no-cache --extras "storage"
