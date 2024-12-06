@@ -41,9 +41,9 @@ fi
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
-    poetry install --no-root --no-interaction --no-cache --extras "storage"
+    pip install kserve[storage]
 COPY kserve kserve
-RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
+RUN cd kserve && pip install kserve[storage]
 
 #COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 #RUN cd kserve && \
