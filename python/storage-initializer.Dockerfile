@@ -30,26 +30,20 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 COPY kserve/requirements.txt  kserve/
-RUN if [ "$(uname -m)" = "s390x" ]; then pip install -r /kserve/requirements.txt; fi
-RUN if [ "$(uname -m)" = "s390x" ]; then \
-    git clone https://github.com/R3hankhan123/numpy-whl.git && \
-    cd numpy-whl && \
-    pip install *.whl && \
-    cd .. && \
-    rm -rf numpy-whl; \
-fi
+#RUN if [ "$(uname -m)" = "s390x" ]; then pip install -r /kserve/requirements.txt; fi
+#RUN if [ "$(uname -m)" = "s390x" ]; then \
+#    git clone https://github.com/R3hankhan123/numpy-whl.git && \
+#    cd numpy-whl && \
+#    pip install *.whl && \
+#    cd .. && \
+#    rm -rf numpy-whl; \
+#fi
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
-    pip install kserve[storage]
+    pip install kserve[storage] --no-cache-dir
 COPY kserve kserve
-RUN cd kserve && pip install kserve[storage]
-
-#COPY kserve/pyproject.toml kserve/poetry.lock kserve/
-#RUN cd kserve && \
-#    pip install kserve[storage] --no-cache-dir
-#COPY kserve kserve
-#RUN cd kserve && pip install kserve[storage] --no-cache-dir
+RUN cd kserve && pip install kserve[storage] --no-cache-dir
 
 ARG DEBIAN_FRONTEND=noninteractive
 
