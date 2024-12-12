@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-dev bui
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH="$PATH:${POETRY_HOME}/bin:${CARGO_HOME}/bin"
-RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
+#RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
 
 # Activate virtual env
 ARG VENV_PATH
@@ -29,7 +29,7 @@ ENV VIRTUAL_ENV=${VENV_PATH}
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
-COPY kserve/requirements.txt  kserve/
+#COPY kserve/requirements.txt  kserve/
 #RUN if [ "$(uname -m)" = "s390x" ]; then pip install -r /kserve/requirements.txt; fi
 #RUN if [ "$(uname -m)" = "s390x" ]; then poetry add https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl
 #fi
@@ -37,11 +37,12 @@ COPY kserve/requirements.txt  kserve/
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
     if [ "$(uname -m)" = "s390x" ]; then \
-        poetry add --no-interaction --no-cache "https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl"; \
+       pip install https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl \
+       https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl; \
     fi && \
-    poetry install --no-root --no-interaction --no-cache --extras "storage" -v
+    pip install kserve[storage] --no-cache-dir
 COPY kserve kserve
-RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
+RUN cd kserve && pip install kserve[storage] --no-cache-dir
 
 ARG DEBIAN_FRONTEND=noninteractive
 
