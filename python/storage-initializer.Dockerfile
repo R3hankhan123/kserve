@@ -30,7 +30,7 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 COPY kserve/requirements.txt  kserve/
-RUN if [ "$(uname -m)" = "s390x" ]; then pip install -r /kserve/requirements.txt; fi
+#RUN if [ "$(uname -m)" = "s390x" ]; then pip install -r /kserve/requirements.txt; fi
 #RUN if [ "$(uname -m)" = "s390x" ]; then poetry add https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl
 #fi
 
@@ -39,7 +39,7 @@ RUN cd kserve && \
     if [ "$(uname -m)" = "s390x" ]; then \
         poetry add --no-interaction --no-cache "https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl"; \
     fi && \
-    poetry install --no-root --no-interaction --no-cache --extras "storage"
+    poetry install --no-root --no-interaction --no-cache --extras "storage" -v
 COPY kserve kserve
 RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
 
