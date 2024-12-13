@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-dev bui
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH="$PATH:${POETRY_HOME}/bin:${CARGO_HOME}/bin"
-#RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
+RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
 
 # Activate virtual env
 ARG VENV_PATH
