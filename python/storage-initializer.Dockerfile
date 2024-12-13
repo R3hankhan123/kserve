@@ -36,13 +36,13 @@ ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
-    if [ "$(uname -m)" = "s390x" ]; then \
-       pip install https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl \
-       https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl; \
-    fi && \
-    pip install kserve[storage] --no-cache-dir
+    #if [ "$(uname -m)" = "s390x" ]; then \
+    #   pip install https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl \
+    #   https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl; \
+    #fi && \
+    poetry install --no-root --no-interaction --no-cache --extras "storage" -vvv
 COPY kserve kserve
-RUN cd kserve && pip install kserve[storage] --no-cache-dir
+RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
