@@ -61,9 +61,9 @@ RUN apt-get update && apt-get install -y \
     libkrb5-dev \
     krb5-config \
     && rm -rf /var/lib/apt/lists/*
-RUN if ["$(uname -m)" = "s390x" ]; then \
+RUN if [ "$(uname -m)" = "s390x" ]; then \
     pip install https://github.com/R3hankhan123/pandas-z/releases/download/0.7.0/krb5-0.7.0-cp311-cp311-linux_s390x.whl; \
-    fi
+fi
 RUN pip install --no-cache-dir krbcontext==0.10 hdfs~=2.6.0 requests-kerberos==0.14.0
 
 
