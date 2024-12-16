@@ -21,15 +21,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-dev bui
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH="$PATH:${POETRY_HOME}/bin:${CARGO_HOME}/bin"
-RUN if [ "$(uname -m)" = "s390x" ]; then \
-        python3 -m venv ${POETRY_HOME} && \
-        ${POETRY_HOME}/bin/pip install \
-            https://github.com/R3hankhan123/pandas-z/releases/download/43.0.1/cryptography-43.0.1-cp37-abi3-linux_s390x.whl \
-            poetry==${POETRY_VERSION}; \
-    else \
-        python3 -m venv ${POETRY_HOME} && \
-        ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}; \
-    fi
+#RUN if [ "$(uname -m)" = "s390x" ]; then \
+#        python3 -m venv ${POETRY_HOME} && \
+#       ${POETRY_HOME}/bin/pip install \
+#            https://github.com/R3hankhan123/pandas-z/releases/download/43.0.1/cryptography-43.0.1-cp37-abi3-linux_s390x.whl \
+#            poetry==${POETRY_VERSION}; \
+#    else \
+#        python3 -m venv ${POETRY_HOME} && \
+#        ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}; \
+#    fi
 
 # Activate virtual env
 ARG VENV_PATH
@@ -45,14 +45,14 @@ ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
     if [ "$(uname -m)" = "s390x" ]; then \
-       poetry add  numpy@https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl \
-       grpcio@ https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl \
-       pandas@https://github.com/R3hankhan123/pandas-z/releases/download/2.2.2/pandas-2.2.2-cp311-cp311-linux_s390x.whl \
-       cryptography@https://github.com/R3hankhan123/pandas-z/releases/download/43.0.1/cryptography-43.0.1-cp37-abi3-linux_s390x.whl; \
+       pip install https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl \
+       https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl \
+       https://github.com/R3hankhan123/pandas-z/releases/download/2.2.2/pandas-2.2.2-cp311-cp311-linux_s390x.whl \
+       https://github.com/R3hankhan123/pandas-z/releases/download/43.0.1/cryptography-43.0.1-cp37-abi3-linux_s390x.whl; \
     fi && \
-    poetry install --no-root --no-interaction --no-cache --extras "storage" -vvv
+    pip install kserve[storage] --no-cache-dir
 COPY kserve kserve
-RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
+RUN cd kserve && pip install kserve[storage]
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -61,7 +61,9 @@ RUN apt-get update && apt-get install -y \
     libkrb5-dev \
     krb5-config \
     && rm -rf /var/lib/apt/lists/*
-
+RUN if ["$(uname -m)" = "s390x" ]; then \
+    pip install https://github.com/R3hankhan123/pandas-z/releases/download/0.7.0/krb5-0.7.0-cp311-cp311-linux_s390x.whl; \
+    fi
 RUN pip install --no-cache-dir krbcontext==0.10 hdfs~=2.6.0 requests-kerberos==0.14.0
 
 
