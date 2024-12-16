@@ -21,7 +21,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-dev bui
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH="$PATH:${POETRY_HOME}/bin:${CARGO_HOME}/bin"
-RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install https://github.com/R3hankhan123/pandas-z/releases/download/43.0.1/cryptography-43.0.1-cp37-abi3-linux_s390x.whl poetry==${POETRY_VERSION}
+RUN if [ "$(uname -m)" = "s390x" ]; then \
+        python3 -m venv ${POETRY_HOME} && \
+        ${POETRY_HOME}/bin/pip install \
+            https://github.com/R3hankhan123/pandas-z/releases/download/43.0.1/cryptography-43.0.1-cp37-abi3-linux_s390x.whl \
+            poetry==${POETRY_VERSION}; \
+    else \
+        python3 -m venv ${POETRY_HOME} && \
+        ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}; \
+    fi
 
 # Activate virtual env
 ARG VENV_PATH
