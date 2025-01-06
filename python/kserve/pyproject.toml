@@ -49,30 +49,18 @@ timing-asgi = "^0.3.0"
 tabulate = "^0.9.0"
 pydantic = [{ version = "^2.5.0", python = "3.12" }, { version = ">1.0,<3", python = ">=3.9,<3.12" }]
 pyyaml = "^6.0.0"
-# Multiarch dependencies
-[[tool.poetry.dependencies.numpy]]
-version = "^1.26.0"
-markers = "sys_platform == 'linux' and platform_machine != 's390x'"
-
-[[tool.poetry.dependencies.numpy]]
-url = "https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl"
-markers = "sys_platform == 'linux' and platform_machine == 's390x'"
-
-[[tool.poetry.dependencies.grpcio]]
-version = "^1.60.0"
-markers = "sys_platform == 'linux' and platform_machine != 's390x'"
-
-[[tool.poetry.dependencies.grpcio]]
-url = "https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl"
-markers = "sys_platform == 'linux' and platform_machine == 's390x'"
-
-[[tool.poetry.dependencies.pandas]]
-version = "^2.2.0"
-markers = "sys_platform == 'linux' and platform_machine != 's390x'"
-
-[[tool.poetry.dependencies.pandas]]
-url = "https://github.com/R3hankhan123/pandas-z/releases/download/2.2.2/pandas-2.2.2-cp311-cp311-linux_s390x.whl"
-markers = "sys_platform == 'linux' and platform_machine == 's390x'"
+numpy = [
+    { version = "1.26.4", platform = "linux_s390x", source = "https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl" },
+    { version = "^1.26.0", platform = "!=linux_s390x" }
+]
+grpcio = [
+    { version = "1.66.1", platform = "linux_s390x", source = "https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl" },
+    { version = "^1.60.0", platform = "!=linux_s390x" }
+]
+pandas = [
+    { version = "2.2.2", platform = "linux_s390x", source = "https://github.com/R3hankhan123/pandas-z/releases/download/2.2.2/pandas-2.2.2-cp311-cp311-linux_s390x.whl" },
+    { version = "^2.2.0", platform = "!=linux_s390x" }
+]
 # Storage dependencies. They can be opted into by apps.
 requests = { version = "^2.32.2", optional = true }
 google-cloud-storage = { version = "^2.14.0", optional = true }
