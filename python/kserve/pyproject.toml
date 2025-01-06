@@ -40,27 +40,19 @@ cloudevents = "^1.6.2"
 six = "^1.16.0"
 kubernetes = ">=23.3.0"
 python-dateutil = "^2.8.0"
+numpy = "^1.26.0"
 psutil = "^5.9.6"
+grpcio = "^1.60.0"
 protobuf = "^4.25.4"
 prometheus-client = "^0.20.0"
 orjson = "^3.9.15"
 httpx = "^0.27.2"
 timing-asgi = "^0.3.0"
 tabulate = "^0.9.0"
+pandas =  "^2.2.0"
 pydantic = [{ version = "^2.5.0", python = "3.12" }, { version = ">1.0,<3", python = ">=3.9,<3.12" }]
 pyyaml = "^6.0.0"
-numpy = [
-    { version = "1.26.4", platform = "linux_s390x", source = "https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl" },
-    { version = "^1.26.0", platform = "!=linux_s390x" }
-]
-grpcio = [
-    { version = "1.66.1", platform = "linux_s390x", source = "https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl" },
-    { version = "^1.60.0", platform = "!=linux_s390x" }
-]
-pandas = [
-    { version = "2.2.2", platform = "linux_s390x", source = "https://github.com/R3hankhan123/pandas-z/releases/download/2.2.2/pandas-2.2.2-cp311-cp311-linux_s390x.whl" },
-    { version = "^2.2.0", platform = "!=linux_s390x" }
-]
+
 # Storage dependencies. They can be opted into by apps.
 requests = { version = "^2.32.2", optional = true }
 google-cloud-storage = { version = "^2.14.0", optional = true }
