@@ -55,7 +55,14 @@ ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 #RUN cd kserve && pip install kserve[storage]
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
-RUN cd kserve && poetry lock --no-update && poetry install --no-root --no-interaction --no-cache --extras "storage" -vvv
+RUN cd kserve && \
+    if [ "$(uname -m)" = "s390x" ]; then \
+       poetry add numpy@https://github.com/R3hankhan123/numpy/releases/download/v1.26.4/numpy-1.26.4-cp311-cp311-linux_s390x.whl && \
+       poetry add grpcio@https://github.com/R3hankhan123/grpc-for-Z/releases/download/1.66.1/grpcio-1.66.1-cp311-cp311-linux_s390x.whl && \
+       poetry add pandas@https://github.com/R3hankhan123/pandas-z/releases/download/2.2.2/pandas-2.2.2-cp311-cp311-linux_s390x.whl && \
+       poetry add cryptography@https://github.com/R3hankhan123/pandas-z/releases/download/43.0.1/cryptography-43.0.1-cp37-abi3-linux_s390x.whl; \
+    fi && \
+    poetry install --no-root --no-interaction --no-cache --extras "storage" -vvv
 COPY kserve kserve
 RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
 
