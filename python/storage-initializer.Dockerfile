@@ -7,6 +7,7 @@ FROM ${BASE_IMAGE} AS builder
 # Install Poetry
 ARG POETRY_HOME=/opt/poetry
 ARG POETRY_VERSION=1.8.3
+ARG CARGO_HOME=/opt/.cargo/
 
 # Required for building packages for arm64 arch
 RUN apt-get update && apt-get install -y --no-install-recommends python3-dev build-essential && \
@@ -18,17 +19,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-dev bui
     fi && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
-ENV PATH="$PATH:${POETRY_HOME}/bin"
+
+ENV PATH="$PATH:${POETRY_HOME}/bin:${CARGO_HOME}/bin"
+RUN python3 -m venv ${POETRY_HOME} && \
+    ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION};
 
 # Activate virtual env
 ARG VENV_PATH
 ENV VIRTUAL_ENV=${VENV_PATH}
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
-RUN cd kserve && poetry install --no-root --no-interaction --no-cache --extras "storage"
+RUN cd kserve && \
+    poetry install --no-root --no-interaction --no-cache --extras "storage" -vvv
 COPY kserve kserve
 RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
 
@@ -39,7 +44,6 @@ RUN apt-get update && apt-get install -y \
     libkrb5-dev \
     krb5-config \
     && rm -rf /var/lib/apt/lists/*
-
 RUN pip install --no-cache-dir krbcontext==0.10 hdfs~=2.6.0 requests-kerberos==0.14.0
 
 
@@ -66,3 +70,4 @@ WORKDIR /work
 RUN chown -R kserve:kserve /mnt
 USER 1000
 ENTRYPOINT ["/storage-initializer/scripts/initializer-entrypoint"]
+#for test
