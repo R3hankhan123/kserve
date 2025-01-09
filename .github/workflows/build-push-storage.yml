@@ -20,7 +20,7 @@ env:
   IMAGE_ORG: r3hankhan
   QUAYIO_USERNAME: r3hankhan
   QUAYIO_PASSWORD: FI58faza0po36UOtaHKgc1TFV++AMq5GUVT36m2m5y+MGlwOC+fwxGjwdOZCM8sWgphX7anNhlbkAj+TDTKU9A==
-
+  VERSION: latest
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
