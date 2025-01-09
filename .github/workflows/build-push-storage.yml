@@ -53,7 +53,7 @@ jobs:
           Host builder-s390x
             StrictHostKeyChecking no
             HostName $BUILDER_S390X_SSH_HOST
-            User wfuser
+            User root
             IdentityFile "~/.ssh/id_builder_s390x"
           END
           cat ~/.ssh/config
