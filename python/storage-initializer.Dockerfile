@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-dev bui
     fi && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
 RUN python3 -m venv ${POETRY_HOME} && ${POETRY_HOME}/bin/pip install poetry==${POETRY_VERSION}
 ENV PATH="$PATH:${POETRY_HOME}/bin"
 
