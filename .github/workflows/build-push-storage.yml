@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup SSH config for builders
         env:
-          BUILDER_S390X_SSH_HOST: root@165.192.139.9
+          BUILDER_S390X_SSH_HOST: wfuser@165.192.139.9
           BUILDER_S390X_SSH_KEY: ${{ secrets.BUILDER_S390X_SSH_KEY }}
         run: |
           mkdir ~/.ssh
