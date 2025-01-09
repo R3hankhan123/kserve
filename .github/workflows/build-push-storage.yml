@@ -35,6 +35,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Setup SSH config for builders
         env:
           BUILDER_S390X_SSH_HOST: 165.192.139.9
@@ -61,7 +63,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64/v8
           append: |
             - endpoint: ssh://builder-s390x
               platforms: linux/s390x
@@ -75,7 +77,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/s390x
+          platforms: linux/amd64, linux/arm64/v8,linux/s390x
           context: python
           file: python/storage-initializer.Dockerfile
           push: true
