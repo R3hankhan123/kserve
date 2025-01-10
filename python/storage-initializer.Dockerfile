@@ -33,7 +33,7 @@ ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
 RUN cd kserve && \
-    poetry install --no-root --no-interaction --no-cache --extras "storage" -vvv
+    poetry install --no-root --no-interaction --no-cache --extras "storage"
 COPY kserve kserve
 RUN cd kserve && poetry install --no-interaction --no-cache --extras "storage"
 
