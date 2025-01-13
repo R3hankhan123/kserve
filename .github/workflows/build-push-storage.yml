@@ -140,6 +140,29 @@ jobs:
             IdentityFile "~/.ssh/id_builder_s390x"
           END
           cat ~/.ssh/config    
+      - name: Install Docker on IBM Cloud Instance
+        run: |
+          ssh -o StrictHostKeyChecking=no -i  ~/.ssh/id_builder_s390x root@${{ env.ZVSI_FIP_ADD }} << EOF
+            sudo apt-get update
+            sudo apt-get install -y ca-certificates curl
+
+            # Add Docker GPG key and repository
+            sudo install -m 0755 -d /etc/apt/keyrings
+            sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+            sudo chmod a+r /etc/apt/keyrings/docker.asc
+            echo \
+              "deb [arch=\$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+              \$(. /etc/os-release && echo "\$VERSION_CODENAME") stable" | \
+              sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+            # Update package list and install Docker
+            sudo apt-get update
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+            # Start and enable Docker
+            sudo systemctl start docker
+            sudo systemctl enable docker
+          EOF
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
@@ -162,9 +185,6 @@ jobs:
           push: true
           tags: quay.io/r3hankhan/storage-initializer:latest
           provenance: false
-      - name: Re-authenticate IBM Cloud CLI
-        run: |
-           ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ inputs.ibmcloudRegion }}
       - name: destroy zvsi instance
         if: always()
         run: |
