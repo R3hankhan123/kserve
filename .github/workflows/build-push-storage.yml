@@ -60,6 +60,7 @@ jobs:
       - name: install ibmcli and setup ibm login
         run: |
           curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          echo "Selected region: ${{ github.event.inputs.ibmcloudRegion }}"
           ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ inputs.ibmcloudRegion }} | head -3
           ibmcloud plugin install -f vpc-infrastructure
       - name: generate ssh key
@@ -78,10 +79,6 @@ jobs:
         run: |
            ibmcloud is subnet-create $ZVSI_SUBNET_NAME $ZVSI_VPC_NAME --ipv4-address-count 256 --zone $ZVSI_ZONE --resource-group-id ${{ secrets.IBMCLOUD_RESOURCE_GROUP_ID }} -q --output JSON | jq 'del(.resource_group)'
            sleep 2
-      - name: Re-authenticate IBM Cloud CLI
-        run: |
-           ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ inputs.ibmcloudRegion }}
-
       - name: create security group rule for ssh access
         run: |
            ibmcloud is security-group-rule-add $(ibmcloud is vpc $ZVSI_VPC_NAME --output JSON | jq -r .default_security_group.id) inbound tcp --port-min 22 --port-max 22 -q --output JSON
