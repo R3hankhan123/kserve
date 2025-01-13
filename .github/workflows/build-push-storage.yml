@@ -44,6 +44,7 @@ env:
   ZVSI_FIP_NAME: kserve-ci-fip-${{ github.run_id }}-${{ github.run_number }}
   ZVSI_INS_NAME: kserve-ci-zvsi-${{ github.run_id }}-${{ github.run_number }}
   ZVSI_IMAGE_NAME: ibm-ubuntu-22-04-3-minimal-s390x-2
+  ibmcloudRegion: ${{ github.event.inputs.ibmcloudRegion || 'us-south' }}
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -60,8 +61,8 @@ jobs:
       - name: install ibmcli and setup ibm login
         run: |
           curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-          echo "Selected region: ${{ github.event.inputs.ibmcloudRegion }}"
-          ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ inputs.ibmcloudRegion }} | head -3
+          echo "Selected region: ${{ env.ibmcloudRegion }}"
+          ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ env.ibmcloudRegion }} | head -3
           ibmcloud plugin install -f vpc-infrastructure
       - name: generate ssh key
         run: |
