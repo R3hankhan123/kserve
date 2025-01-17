@@ -23,7 +23,6 @@ env:
   ZVSI_FIP_NAME: kserve-ci-fip-${{ github.run_id }}-${{ github.run_number }}
   ZVSI_INS_NAME: kserve-ci-zvsi-${{ github.run_id }}-${{ github.run_number }}
   ZVSI_IMAGE_NAME: ibm-ubuntu-22-04-3-minimal-s390x-2
-  ZVSI_FIP_ADD: ""
   ibmcloudRegion: us-south
 
 concurrency:
@@ -165,7 +164,7 @@ jobs:
           cat >~/.ssh/config <<END
           Host builder-s390x
             StrictHostKeyChecking no
-            HostName $BUILDER_S390X_SSH_HOST
+            HostName ${{ env.ZVSI_FIP_ADD }}
             User root
             IdentityFile "~/.ssh/id_builder_s390x"
           END
