@@ -23,6 +23,7 @@ env:
   ZVSI_FIP_NAME: kserve-ci-fip-${{ github.run_id }}-${{ github.run_number }}
   ZVSI_INS_NAME: kserve-ci-zvsi-${{ github.run_id }}-${{ github.run_number }}
   ZVSI_IMAGE_NAME: ibm-ubuntu-22-04-3-minimal-s390x-2
+  ZVSI_FIP_ADD: ""
   ibmcloudRegion: us-south
 
 concurrency:
@@ -74,7 +75,6 @@ jobs:
       - name: setup floating ip address for ssh connection
         run: |
            echo "ZVSI_FIP_ADD=$(ibmcloud is floating-ip $ZVSI_FIP_NAME -q --output JSON | jq -r .address)" >> $GITHUB_ENV
-           echo "ZVSI_FIP_ADD=$(ibmcloud is floating-ip $ZVSI_FIP_NAME -q --output JSON | jq -r .address)" >> $GITHUB_OUTPUT
       - name: Check ZVSI is online
         run: |
            zvsi_status=$(ibmcloud is instance $ZVSI_INS_NAME  -q --output JSON | jq -r .status)
@@ -147,11 +147,11 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Debug SSH Host
-        run: echo "BUILDER_S390X_SSH_HOST is ${{ needs.create-instance.outputs.ZVSI_FIP_ADD }}"
+        run: echo "BUILDER_S390X_SSH_HOST is ${{ env.ZVSI_FIP_ADD }}"
 
       - name: Setup SSH config for builders
         env:
-          BUILDER_S390X_SSH_HOST: ${{ needs.create-instance.outputs.ZVSI_FIP_ADD }}
+          BUILDER_S390X_SSH_HOST: ${{ env.ZVSI_FIP_ADD }}
           BUILDER_S390X_SSH_KEY: ${{ secrets.BUILDER_S390X_SSH_KEY }}
         run: |
           mkdir ~/.ssh
