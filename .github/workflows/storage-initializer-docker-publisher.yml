@@ -146,6 +146,9 @@ jobs:
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
 
+      - name: Debug SSH Host
+        run: echo "BUILDER_S390X_SSH_HOST is ${{ needs.create-instance.outputs.ZVSI_FIP_ADD }}"
+
       - name: Setup SSH config for builders
         env:
           BUILDER_S390X_SSH_HOST: ${{ needs.create-instance.outputs.ZVSI_FIP_ADD }}
