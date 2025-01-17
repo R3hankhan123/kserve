@@ -97,8 +97,25 @@ jobs:
               fi
             done
       - name: Install Docker on ZVSI
+        env:
+          BUILDER_S390X_SSH_HOST: ${{ env.ZVSI_FIP_ADD }}
+          BUILDER_S390X_SSH_KEY: ${{ secrets.BUILDER_S390X_SSH_KEY }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.BUILDER_S390X_SSH_KEY }} root@${{ env.ZVSI_FIP_ADD }} << EOF
+          mkdir ~/.ssh
+          chmod 700 ~/.ssh
+          touch ~/.ssh/id_builder_s390x
+          chmod 600 ~/.ssh/id_builder_s390x
+          echo "$BUILDER_S390X_SSH_KEY" > ~/.ssh/id_builder_s390x
+          touch ~/.ssh/config
+          chmod 600 ~/.ssh/config
+          cat >~/.ssh/config <<END
+          Host builder-s390x
+            StrictHostKeyChecking no
+            HostName $BUILDER_S390X_SSH_HOST
+            User root
+            IdentityFile "~/.ssh/id_builder_s390x"
+          END
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_builder_s390x root@${{ env.ZVSI_FIP_ADD }} << EOF
             sudo apt-get update
             sudo apt-get install -y ca-certificates curl
             # Add Docker GPG key and repository
@@ -259,6 +276,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: install ibmcli and setup ibm login
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          echo "Selected region: ${{ env.ibmcloudRegion }}"
+          ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ env.ibmcloudRegion }} | head -3
+          ibmcloud plugin install -f vpc-infrastructure
       - name: destroy zvsi instance
         if: always()
         run: |
