@@ -6,6 +6,7 @@ on:
     branches:
       - master
       - test
+      - test2
 
     # Publish `v1.2.3` tags as releases.
     tags:
