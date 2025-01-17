@@ -142,6 +142,17 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: install ibmcli and setup ibm login
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          echo "Selected region: ${{ env.ibmcloudRegion }}"
+          ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ env.ibmcloudRegion }} | head -3
+          ibmcloud plugin install -f vpc-infrastructure
+
+      - name: setup floating ip address for ssh connection
+        run: |
+           echo "ZVSI_FIP_ADD=$(ibmcloud is floating-ip $ZVSI_FIP_NAME -q --output JSON | jq -r .address)" >> $GITHUB_ENV
+
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
 
