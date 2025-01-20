@@ -234,7 +234,7 @@ jobs:
 
       - name: Export version variable
         run: |
-          IMAGE_ID=quay.io/kserve/$IMAGE_NAME
+          IMAGE_ID=quay.io/r3hankhan/$IMAGE_NAME
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
