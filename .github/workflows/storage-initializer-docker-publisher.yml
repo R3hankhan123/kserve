@@ -118,4 +118,9 @@ jobs:
           # https://github.com/docker/buildx/issues/1533
           provenance: false
           
-  
+  s390x-job:
+    needs: push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run s390x Workflow
+        uses: ./.github/workflows/s390x.yaml
