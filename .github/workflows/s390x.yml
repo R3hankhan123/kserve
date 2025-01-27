@@ -5,6 +5,8 @@ on:
     workflows: ["Storage Intializer Docker Publisher"]  # Replace with the name of the parent workflow
     types:
       - completed
+    branches:
+      - test2 
 
 env:
   IMAGE_NAME: storage-initializer
