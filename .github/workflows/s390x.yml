@@ -98,7 +98,6 @@ jobs:
      - create-zvsi-instance-s390x
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
 
     steps:
       - name: Checkout source
