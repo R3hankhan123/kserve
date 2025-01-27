@@ -7,9 +7,10 @@ FROM ${BASE_IMAGE} AS builder
 # Install Poetry
 ARG POETRY_HOME=/opt/poetry
 ARG POETRY_VERSION=1.8.3
+# Instal Rust
 ARG CARGO_HOME=/opt/.cargo/
 
-# Required for building packages for arm64 arch
+# Required for building packages for arm64 and s390x arch
 RUN apt-get update && apt-get install -y --no-install-recommends python3-dev build-essential && \
     if [ "$(uname -m)" = "s390x" ]; then \
        echo "Installing packages and rust " && \
@@ -29,6 +30,7 @@ ARG VENV_PATH
 ENV VIRTUAL_ENV=${VENV_PATH}
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+# To allow GRPCIO to build build via openssl
 ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL 1
 
 COPY kserve/pyproject.toml kserve/poetry.lock kserve/
@@ -70,4 +72,3 @@ WORKDIR /work
 RUN chown -R kserve:kserve /mnt
 USER 1000
 ENTRYPOINT ["/storage-initializer/scripts/initializer-entrypoint"]
-#for test
