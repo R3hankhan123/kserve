@@ -2,7 +2,7 @@ name: Build and Annotate s390x Image
 
 on:
   workflow_run:
-    workflows: ["storage-initializer-docker-publisher"]  # Replace with the name of the parent workflow
+    workflows: ["Storage Intializer Docker Publisher"]  # Replace with the name of the parent workflow
     types:
       - completed
 
