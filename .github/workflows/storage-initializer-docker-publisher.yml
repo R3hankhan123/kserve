@@ -52,7 +52,7 @@ jobs:
       - name: Run tests
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64, linux/arm64/v8
+          platforms: linux/amd64
           context: python
           file: python/storage-initializer.Dockerfile
           push: false
@@ -110,7 +110,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64, linux/s390x
+          platforms: linux/amd64
           context: python
           file: python/storage-initializer.Dockerfile
           push: true
