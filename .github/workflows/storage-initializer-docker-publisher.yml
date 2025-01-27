@@ -47,7 +47,7 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          platforms: linux/amd64,linux/arm64/v8
+          platforms: linux/amd64
 
       - name: Run tests
         uses: docker/build-push-action@v5
@@ -110,7 +110,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64, linux/arm64/v8, linux/s390x
+          platforms: linux/amd64, linux/s390x
           context: python
           file: python/storage-initializer.Dockerfile
           push: true
