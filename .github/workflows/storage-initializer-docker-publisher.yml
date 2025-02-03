@@ -172,13 +172,49 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: install ibmcli and setup ibm login
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          echo "Selected region: ${{ env.ibmcloudRegion }}"
+          ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ env.ibmcloudRegion }} | head -3
+          ibmcloud plugin install -f vpc-infrastructure
+      - name: setup floating ip address for ssh connection
+        run: |
+           echo "ZVSI_FIP_ADD=$(ibmcloud is floating-ip $ZVSI_FIP_NAME -q --output JSON | jq -r .address)" >> $GITHUB_ENV
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
-          
+
+      - name: Debug SSH Host
+        run: echo "BUILDER_S390X_SSH_HOST is ${{ env.ZVSI_FIP_ADD }}"
+
+      - name: Setup SSH config for builders
+        env:
+          BUILDER_S390X_SSH_HOST: ${{ env.ZVSI_FIP_ADD }}
+          BUILDER_S390X_SSH_KEY: ${{ secrets.BUILDER_S390X_SSH_KEY }}
+        run: |
+          mkdir ~/.ssh
+          chmod 700 ~/.ssh
+          touch ~/.ssh/id_builder_s390x
+          chmod 600 ~/.ssh/id_builder_s390x
+          echo "$BUILDER_S390X_SSH_KEY" > ~/.ssh/id_builder_s390x
+          echo $BUILDER_S390X_SSH_HOST
+          touch ~/.ssh/config
+          chmod 600 ~/.ssh/config
+          cat >~/.ssh/config <<END
+          Host builder-s390x
+            StrictHostKeyChecking no
+            HostName ${{ env.ZVSI_FIP_ADD }}
+            User root
+            IdentityFile "~/.ssh/id_builder_s390x"
+          END
+          cat ~/.ssh/config    
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
           platforms: linux/amd64,linux/arm64/v8
+          append: |
+            - endpoint: ssh://builder-s390x
+              platforms: linux/s390x
               
       - name: Login to Quay.io
         uses: docker/login-action@v2
