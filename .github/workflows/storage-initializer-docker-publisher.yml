@@ -151,7 +151,7 @@ jobs:
       - name: Run tests
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64, linux/arm64/v8, linux/s390x
+          platforms: linux/amd64, linux/s390x
           context: python
           file: python/storage-initializer.Dockerfile
           push: false
@@ -209,11 +209,68 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/s390x
           context: python
           file: python/storage-initializer.Dockerfile
           push: true
           tags: ${{ env.IMAGE_ID }}:${{ env.VERSION }}
           # https://github.com/docker/buildx/issues/1533
           provenance: false
+
+  delete-zvsi-instance-s390x:
+    needs: 
+    - create-zvsi-instance-s390x
+    - test
+    - push
+    if: always()
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: install ibmcli and setup ibm login
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          echo "Selected region: ${{ env.ibmcloudRegion }}"
+          ibmcloud login -q --apikey ${{ secrets.IBMCLOUD_API_KEY }} -r ${{ env.ibmcloudRegion }} | head -3
+          ibmcloud plugin install -f vpc-infrastructure
           
+      - name: destroy zvsi instance
+        if: always()
+        run: |
+          ibmcloud is instance-delete  -f -q $ZVSI_INS_NAME
+          sleep 15
+          
+      - name: Check ZVSI is offline
+        if: always()
+        run: |
+           zvsi_status=$(ibmcloud is instance $ZVSI_INS_NAME  -q --output JSON | jq -r .status)
+           if [[ -z "$zvsi_status" ]]; then
+              echo "ZVSI is destroyed";
+              break
+           fi
+           while [[ $zvsi_status == "running" || $zvsi_status == "deleting" ]]
+            do
+              sleep 5
+              zvsi_status=$(ibmcloud is instance $ZVSI_INS_NAME  -q --output JSON | jq -r .status)
+              if [[ -z "$zvsi_status" ]]; then
+              echo "ZVSI is destroyed";
+              break
+              fi
+            done
+            
+      - name: release floating ip address
+        if: always()
+        run: |
+           ibmcloud is floating-ip-release -f -q $ZVSI_FIP_NAME
+           
+      - name: cleanup subnet
+        if: always()
+        run: |
+           ibmcloud is subnet-delete -f -q $ZVSI_SUBNET_NAME
+           sleep 2
+           
+      - name: cleanup virtual private cloud instance
+        if: always()
+        run: |
+           ibmcloud is vpc-delete -f -q $ZVSI_VPC_NAME
+           sleep 2
