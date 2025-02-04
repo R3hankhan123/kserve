@@ -1,7 +1,13 @@
 name: Storage Intializer Docker Publisher (S390X)
 
 on:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: 'Build Storage Intializer for s390x'
+        required: false
+        type: string
+        default: 'refs/heads/master'
 
 env:
   IMAGE_NAME: storage-initializer
