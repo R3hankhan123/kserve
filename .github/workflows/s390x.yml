@@ -1,13 +1,7 @@
-name: Build and Annotate s390x Image
+name: Storage Intializer Docker Publisher (S390X)
 
 on:
-  workflow_run:
-    workflows:
-      - "Storage Intializer Docker Publisher" # Replace with the name of the parent workflow
-    types:
-      - completed
-    branches:
-      - '**' 
+  workflow_dispatch:
 
 env:
   IMAGE_NAME: storage-initializer
@@ -26,8 +20,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   create-zvsi-instance-s390x:
     runs-on: ubuntu-latest
     
@@ -92,12 +84,15 @@ jobs:
               fi
             done
 
+  # Push image to GitHub Packages.
+  # See also https://docs.docker.com/docker-hub/builds/
   push:
     # Ensure test job passes before pushing image.
     needs: 
      - create-zvsi-instance-s390x
 
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
     steps:
       - name: Checkout source
@@ -116,9 +111,6 @@ jobs:
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
-
-      - name: Debug SSH Host
-        run: echo "BUILDER_S390X_SSH_HOST is ${{ env.ZVSI_FIP_ADD }}"
 
       - name: Setup SSH config for builders
         env:
@@ -149,7 +141,7 @@ jobs:
           append: |
             - endpoint: ssh://builder-s390x
               platforms: linux/s390x
-              
+
       - name: Login to Quay.io
         uses: docker/login-action@v2
         with:
@@ -186,17 +178,21 @@ jobs:
           tags: ${{ env.IMAGE_ID }}:${{ env.VERSION }}-s390x
           # https://github.com/docker/buildx/issues/1533
           provenance: false
-          
-      - name: Pull existing image
-        run: docker pull ${{ env.IMAGE_ID }}:${{ env.VERSION }}
 
-      - name: Create and push manifest
+      - name: Create and push multi-arch manifest
         run: |
-          docker manifest create ${{ env.IMAGE_ID }}:${{ env.VERSION }} \
-          --amend ${{ env.IMAGE_ID }}:${{ env.VERSION }} \
-          --amend ${{ env.IMAGE_ID }}:${{ env.VERSION }}-s390x
-          docker manifest push ${{ env.IMAGE_ID }}:${{ env.VERSION }}
-      
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [ "$VERSION" == "master" ] && VERSION=latest
+
+          REPO=kserve/storage-initializer
+
+          # Create and push multi-arch manifest
+          docker manifest create $REPO:$VERSION \
+            $REPO:$VERSION \
+            $REPO:$VERSION-s390x
+
+          docker manifest push $REPO:$VERSION
+          
   delete-zvsi-instance-s390x:
     needs: 
     - create-zvsi-instance-s390x
