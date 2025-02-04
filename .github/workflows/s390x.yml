@@ -20,7 +20,11 @@ env:
   ZVSI_IMAGE_NAME: quay-s390x-custom-docker
   IBMCLOUD_RESOURCE_GROUP_ID: 803a282c432046c488b775f326ffc867
   ibmcloudRegion: jp-tok
-
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.run_id }}
+  cancel-in-progress: true
+  
 jobs:
   create-zvsi-instance-s390x:
     runs-on: ubuntu-latest
