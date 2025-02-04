@@ -109,11 +109,4 @@ jobs:
           
   trigger-s390x-workflow:
     needs: push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger s390x Workflow
-        uses: peter-evans/workflow-dispatch@v1
-        with:
-          repository: ${{ github.repository }}
-          workflow: "s390x.yml"   # name of the s390x workflow file
-          ref: refs/heads/master
+    uses: ./.github/workflows/s390x.yaml
