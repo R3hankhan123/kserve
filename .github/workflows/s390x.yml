@@ -190,14 +190,17 @@ jobs:
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
           [ "$VERSION" == "master" ] && VERSION=latest
 
-          REPO=kserve/storage-initializer
+          IMAGE_ID=quay.io/r3hankhan/$IMAGE_NAME
 
+          docker pull $IMAGE_ID:$VERSION
+          docker tag $IMAGE_ID:$VERSION $IMAGE_ID:$VERSION-amd64
+          docker rmi $IMAGE_ID:$VERSION
           # Create and push multi-arch manifest
-          docker manifest create $REPO:$VERSION \
-            $REPO:$VERSION \
-            $REPO:$VERSION-s390x
+          docker manifest create $IMAGE_ID:$VERSION \
+            $IMAGE_ID:$VERSION-amd64 \
+            $IMAGE_ID:$VERSION-s390x
 
-          docker manifest push $REPO:$VERSION
+          docker manifest push $IMAGE_ID:$VERSION
           
   delete-zvsi-instance-s390x:
     needs: 
