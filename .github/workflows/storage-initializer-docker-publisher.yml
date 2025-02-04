@@ -109,4 +109,4 @@ jobs:
           
   trigger-s390x-workflow:
     needs: push
-    uses: ./.github/workflows/s390x.yaml
+    uses: ./.github/workflows/s390x.yml
