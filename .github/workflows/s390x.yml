@@ -192,10 +192,10 @@ jobs:
 
           IMAGE_ID=quay.io/r3hankhan/$IMAGE_NAME
 
-          docker pull $IMAGE_ID:$VERSION-amd64
+          docker pull $IMAGE_ID:$VERSION
           # Create and push multi-arch manifest
           docker manifest create $IMAGE_ID:$VERSION \
-            $IMAGE_ID:$VERSION-amd64 \
+            $IMAGE_ID:$VERSION \
             $IMAGE_ID:$VERSION-s390x
 
           docker manifest push $IMAGE_ID:$VERSION
