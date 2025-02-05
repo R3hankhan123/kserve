@@ -192,9 +192,7 @@ jobs:
 
           IMAGE_ID=quay.io/r3hankhan/$IMAGE_NAME
 
-          docker pull $IMAGE_ID:$VERSION
-          docker tag $IMAGE_ID:$VERSION $IMAGE_ID:$VERSION-amd64
-          docker rmi $IMAGE_ID:$VERSION
+          docker pull $IMAGE_ID:$VERSION-amd64
           # Create and push multi-arch manifest
           docker manifest create $IMAGE_ID:$VERSION \
             $IMAGE_ID:$VERSION-amd64 \
