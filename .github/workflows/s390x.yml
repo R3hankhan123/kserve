@@ -180,7 +180,7 @@ jobs:
           platforms: linux/s390x
           context: python
           file: python/storage-initializer.Dockerfile
-          push: false
+          push: true
           tags: ${{ env.IMAGE_ID }}:${{ env.VERSION }}-s390x
           # https://github.com/docker/buildx/issues/1533
           provenance: false
@@ -193,6 +193,7 @@ jobs:
           IMAGE_ID=quay.io/r3hankhan/$IMAGE_NAME
 
           docker pull $IMAGE_ID:$VERSION
+
           # Create and push multi-arch manifest
           docker manifest create $IMAGE_ID:$VERSION \
             $IMAGE_ID:$VERSION \
