@@ -1,5 +1,5 @@
 name: Storage Intializer Docker Publisher
-
+##
 on:
   push:
     # Publish `master` as Docker `latest` image.
